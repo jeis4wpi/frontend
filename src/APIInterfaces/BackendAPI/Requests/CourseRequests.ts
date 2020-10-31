@@ -505,17 +505,19 @@ export const postConfirmAttachmentUpload = async (options: PostConfirmAttachment
 export const getAttachments = async ({
     studentGradeId,
     studentGradeInstanceId,
-    // studentWorkbookId,
+    studentWorkbookId,
 }: ListAttachmentOptions): Promise<AxiosResponse<ListAttachmentsResponse>> => {
     try {
+        const gradeParams = {
+            ...(studentGradeInstanceId ?
+                {studentGradeInstanceId: studentGradeInstanceId} :
+                {studentGradeId: studentGradeId}
+            ),
+        }
+        const params = studentWorkbookId ? { studentWorkbookId } : gradeParams;
+    
         return await AxiosRequest.get(COURSE_ATTACHMENTS_LIST_PATH, {
-            params: {
-                ...(studentGradeInstanceId ?
-                    {studentGradeInstanceId: studentGradeInstanceId} :
-                    {studentGradeId: studentGradeId}
-                ),
-                // studentWorkbookId,
-            }
+            params,
         });
     } catch (e) {
         throw new BackendAPIError(e);

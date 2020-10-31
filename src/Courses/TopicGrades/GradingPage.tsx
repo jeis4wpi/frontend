@@ -11,6 +11,7 @@ import ProblemIframe from '../../Assignments/ProblemIframe';
 import { getAssessmentProblemsWithWorkbooks } from '../../APIInterfaces/BackendAPI/Requests/CourseRequests';
 import { GradeInfoHeader } from './GradeInfoHeader';
 import { useQuery } from '../../Hooks/UseQuery';
+import AttachmentsPreview from './AttachmentsPreview';
 
 interface TopicGradingPageProps {
     topicId?: string;
@@ -283,6 +284,15 @@ export const TopicGradingPage: React.FC<TopicGradingPageProps> = () => {
                             previewPath={selectedInfo.path}
                             previewSeed={selectedInfo.seed}
                         />
+                    )}
+                </Grid>
+                <Grid container item md={12}>
+                    TODO: FIXME
+                    {selected.workbook && (
+                        <AttachmentsPreview 
+                            // gradeId={}
+                            // gradeInstanceId={}
+                            workbookId={selected.workbook.id} />
                     )}
                 </Grid>
             </Grid>

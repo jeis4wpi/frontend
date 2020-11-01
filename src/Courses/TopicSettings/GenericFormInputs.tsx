@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControlLabel, Switch, TextField } from '@material-ui/core';
+import { FormControlLabel, InputAdornment, Switch, TextField } from '@material-ui/core';
 import _ from 'lodash';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import ChipInput from 'material-ui-chip-input';
@@ -195,6 +195,11 @@ export const DurationField: React.FC<{}> = () => {
             label={'Time Limit (minutes)'}
             type='number'
             inputProps={{min: 10}}
+            InputProps={{
+                endAdornment: <InputAdornment position='end'>
+                        minutes
+                    </InputAdornment>
+            }}
         />
     );
 };

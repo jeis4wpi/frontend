@@ -6,7 +6,6 @@ import { EditToggleButton } from '../../Components/EditToggleButton';
 import { UserRole, getUserRole } from '../../Enums/UserRole';
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import _ from 'lodash';
-import TopicCreationModal from '../CourseCreation/TopicCreationModal';
 import { ConfirmationModal } from '../../Components/ConfirmationModal';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { putUnit, putTopic, deleteTopic, deleteUnit, postUnit, postTopic } from '../../APIInterfaces/BackendAPI/Requests/CourseRequests';
@@ -27,8 +26,6 @@ export const TopicsTab: React.FC<TopicsTabProps> = ({ course, setCourse }) => {
     const [inEditMode, setInEditMode] = useState<boolean>(false);
     const [error, setError] = useState<Error | null | undefined>(null);
     const userType: UserRole = getUserRole();
-
-    const [showTopicCreation, setShowTopicCreation] = useState<{ show: boolean, unitIndex: number, existingTopic?: TopicObject | undefined }>({ show: false, unitIndex: -1 });
     const [confirmationParamters, setConfirmationParamters] = useState<{ show: boolean, identifierText: string, onConfirm?: (() => unknown) | null }>(DEFAULT_CONFIRMATION_PARAMETERS);
 
     const showEditTopic = (e: any, unitIdentifier: number, topicIdentifier: number) => {
@@ -45,7 +42,6 @@ export const TopicsTab: React.FC<TopicsTabProps> = ({ course, setCourse }) => {
             logger.error(`Cannot find topic with id ${topicIdentifier} in unit with id ${unitIdentifier}`);
             return;
         }
-        setShowTopicCreation({ show: true, unitIndex: unitIdentifier, existingTopic: topic });
     };
 
     const removeTopic = async (unitId: number, topicId: number) => {
@@ -161,43 +157,6 @@ export const TopicsTab: React.FC<TopicsTabProps> = ({ course, setCourse }) => {
             identifierText: 'this unit',
             onConfirm: _.partial(removeUnit, unitId)
         });
-    };
-
-    const addTopic = (unitIndex: number, existingTopic: TopicObject | null | undefined, topic: TopicObject) => {
-        logger.info('Adding Topic', unitIndex, existingTopic, topic);
-        if (topic.questions.length <= 0) {
-            // TODO: Render validation!
-            logger.error('Attempted to add a topic without questions!');
-            return;
-        }
-
-        let newCourse: CourseObject = new CourseObject(course);
-        let unit = _.find(newCourse.units, ['unique', unitIndex]);
-
-        if (!unit) {
-            logger.error(`Could not find a unit with id ${unitIndex}`);
-            logger.info(`Could not find a unit with id ${unitIndex}`);
-            return;
-        }
-
-        // If a topic already exists, update and overwrite it in the course object.
-        if (existingTopic) {
-            let oldTopic = _.find(unit.topics, ['unique', existingTopic.unique]);
-
-            if (!oldTopic) {
-                logger.error(`Could not update topic ${existingTopic.id} in unit ${unitIndex}`);
-            }
-
-            _.assign(oldTopic, topic);
-        } else {
-            // Otherwise, concatenate this object onto the existing array.
-            // topic.contentOrder = unit.topics.length;
-            topic.contentOrder = Math.max(...unit.topics.map(topic => topic.contentOrder), 0) + 1;
-            unit.topics = _.concat(unit.topics, new TopicObject(topic));
-        }
-
-        setCourse?.(newCourse);
-        setShowTopicCreation({ show: false, unitIndex: -1 });
     };
 
     const onUnitBlur = async (event: React.FocusEvent<HTMLHeadingElement>, unitId: number) => {
@@ -370,32 +329,6 @@ export const TopicsTab: React.FC<TopicsTabProps> = ({ course, setCourse }) => {
 
     return (
         <>
-            <Modal
-                show={showTopicCreation.show}
-                onHide={() => setShowTopicCreation({ show: false, unitIndex: -1 })}
-                dialogClassName="topicCreationModal"
-            >
-                <TopicCreationModal
-                    unitIndex={showTopicCreation.unitIndex}
-                    addTopic={addTopic}
-                    existingTopic={showTopicCreation.existingTopic}
-                    closeModal={_.partial(setShowTopicCreation, { show: false, unitIndex: -1 })}
-                    updateTopic={(topic: TopicObject) => {
-                        const existingUnit = _.find(course.units, ['id', topic.courseUnitContentId]);
-                        if (_.isNil(existingUnit)) {
-                            logger.error('Could not find unit');
-                            return;
-                        }
-                        const topicIndex = _.findIndex(existingUnit.topics, ['id', topic.id]);
-                        if (_.isNil(topicIndex)) {
-                            logger.error('Could not find topic');
-                            return;
-                        }
-                        existingUnit.topics[topicIndex] = topic;
-                        setCourse?.(new CourseObject(course));
-                    }}
-                />
-            </Modal>
             <ConfirmationModal
                 onConfirm={() => {
                     confirmationParamters.onConfirm?.();

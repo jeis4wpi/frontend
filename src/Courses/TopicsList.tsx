@@ -17,6 +17,8 @@ import logger from '../Utilities/Logger';
 interface TopicsListProps {
     listOfTopics: Array<TopicObject>;
     flush?: boolean;
+    // TODO: Remove, this is no longer being used from the parent scope.
+    // Or, use it to update the name in the parent scope.
     showEditTopic?: _.CurriedFunction2<any, number, void>;
     removeTopic?: _.CurriedFunction2<any, number, void>;
     unitUnique?: number;
@@ -26,7 +28,6 @@ interface TopicsListProps {
  * Lists topics. Clicking into one will go to the problem sets.
  */
 export const TopicsList: React.FC<TopicsListProps> = ({listOfTopics, flush, showEditTopic, removeTopic, unitUnique}) => {
-    const [, setTopicFeedback] = useState({topicId: -1, feedback: '', variant: 'danger'});
     const [showSettingsModal, setShowSettingsModal] = useState<{state: boolean, topic: TopicObject | null}>({state: false, topic: null});
     const userType: UserRole = getUserRole();
     const userId: number = getUserId();

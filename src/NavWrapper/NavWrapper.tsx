@@ -10,7 +10,6 @@ import './NavWrapper.css';
 import NavbarCollapse from 'react-bootstrap/NavbarCollapse';
 import { getUserRole, unauthorizedRedirect, UserRole } from '../Enums/UserRole';
 import CourseCreationPage from '../Courses/CourseCreation/CourseCreationPage';
-import CourseEditPage from '../Courses/CourseCreation/CourseEditPage';
 import SimpleProblemPage from '../Assignments/SimpleProblemPage';
 import AdviserPage from '../Adviser/AdviserPage';
 import EnrollUserPage from '../Courses/EnrollUserPage';
@@ -116,9 +115,6 @@ export const NavWrapper: React.FC<NavWrapperProps> = () => {
                             </Route>
                             <Route path={`${path}/courses/settings/:courseId`}>
                                 <SettingsPage />
-                            </Route>
-                            <Route path={`${path}/courses/edit/:courseId`}>
-                                <CourseEditPage />
                             </Route>
                             <Route path={`${path}/courses/enroll/:enrollCode`}>
                                 <EnrollUserPage />

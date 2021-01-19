@@ -31,8 +31,6 @@ enum CourseDetailsTabs {
     STUDENT_GRADES = 'Student Grades',
 }
 
-export const courseContext = React.createContext(new CourseObject());
-
 /**
  * This page renders a tabbed view of course details. If a user is a professor, this will have an additional tab
  * to view enrolled students and send emails.
@@ -48,7 +46,6 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = () => {
     const [studentNameAndId, setStudentNameAndId] = useState<{name: string, userId: number} | null>(null);
     const { url } = useRouteMatch();
     const history = useHistory();
-    const { Provider } = courseContext;
 
     // TODO: Back navigation with this approach seems slow. Is there a faster way to detect the url change?
     useEffect(()=>{
@@ -65,67 +62,65 @@ export const CourseDetailsPage: React.FC<CourseDetailsPageProps> = () => {
 
     return (
         <Container>
-            <Provider value={course}>
-                <Tabs
-                    activeKey={activeTab}
-                    defaultActiveKey={tab ?? CourseDetailsTabs.DETAILS}
-                    id='course-details-tabs'
-                    onSelect={(activeTab: any) => {
-                        setActiveTab(activeTab);
-                        setStudentNameAndId(null);
-                        history.push(`${url}?tab=${activeTab}`);
-                    }}>
+            <Tabs
+                activeKey={activeTab}
+                defaultActiveKey={tab ?? CourseDetailsTabs.DETAILS}
+                id='course-details-tabs'
+                onSelect={(activeTab: any) => {
+                    setActiveTab(activeTab);
+                    setStudentNameAndId(null);
+                    history.push(`${url}?tab=${activeTab}`);
+                }}>
+                <Tab
+                    mountOnEnter
+                    eventKey={CourseDetailsTabs.DETAILS} title={CourseDetailsTabs.DETAILS}
+                    style={{marginBottom:'10px'}}
+                >
+                    {/* TODO: pass loading state between CourseProvider */}
+                    <CourseDetailsTab course={course} error={error} loading={false} setCourse={setCourse} />
+                </Tab>
+                <Tab
+                    mountOnEnter
+                    unmountOnExit
+                    eventKey={CourseDetailsTabs.TOPICS}
+                    title={CourseDetailsTabs.TOPICS}
+                >
+                    <TopicsTab course={course} setCourse={setCourse} />
+                </Tab>
+                <Tab
+                    mountOnEnter
+                    eventKey={CourseDetailsTabs.ENROLLMENTS}
+                    title={CourseDetailsTabs.ENROLLMENTS}
+                >
+                    <EnrollmentsTab />
+                </Tab>
+                <Tab
+                    mountOnEnter
+                    eventKey={CourseDetailsTabs.GRADES}
+                    title={CourseDetailsTabs.GRADES}
+                >
+                    {/* Students' Grades view is really the statisics view. */}
+                    {userType === UserRole.STUDENT ?
+                        <StatisticsTab course={course} userId={userId} /> :
+                        <GradesTab course={course} setStudentGradesTab={setStudentGradesTab} />}
+                </Tab>
+                {userType !== UserRole.STUDENT && (
                     <Tab
                         mountOnEnter
-                        eventKey={CourseDetailsTabs.DETAILS} title={CourseDetailsTabs.DETAILS}
-                        style={{marginBottom:'10px'}}
+                        eventKey={CourseDetailsTabs.STATISTICS}
+                        title={CourseDetailsTabs.STATISTICS}
                     >
-                        {/* TODO: pass loading state between CourseProvider */}
-                        <CourseDetailsTab course={course} error={error} loading={false} setCourse={setCourse} />
-                    </Tab>
+                        <StatisticsTab course={course} />
+                    </Tab>)}
+                {studentNameAndId !== null && (
                     <Tab
                         mountOnEnter
-                        unmountOnExit
-                        eventKey={CourseDetailsTabs.TOPICS}
-                        title={CourseDetailsTabs.TOPICS}
+                        eventKey={CourseDetailsTabs.STUDENT_GRADES}
+                        title={`${studentNameAndId.name}'s Grades`}
                     >
-                        <TopicsTab course={course} setCourse={setCourse} />
-                    </Tab>
-                    <Tab
-                        mountOnEnter
-                        eventKey={CourseDetailsTabs.ENROLLMENTS}
-                        title={CourseDetailsTabs.ENROLLMENTS}
-                    >
-                        <EnrollmentsTab />
-                    </Tab>
-                    <Tab
-                        mountOnEnter
-                        eventKey={CourseDetailsTabs.GRADES}
-                        title={CourseDetailsTabs.GRADES}
-                    >
-                        {/* Students' Grades view is really the statisics view. */}
-                        {userType === UserRole.STUDENT ?
-                            <StatisticsTab course={course} userId={userId} /> :
-                            <GradesTab course={course} setStudentGradesTab={setStudentGradesTab} />}
-                    </Tab>
-                    {userType !== UserRole.STUDENT && (
-                        <Tab
-                            mountOnEnter
-                            eventKey={CourseDetailsTabs.STATISTICS}
-                            title={CourseDetailsTabs.STATISTICS}
-                        >
-                            <StatisticsTab course={course} />
-                        </Tab>)}
-                    {studentNameAndId !== null && (
-                        <Tab
-                            mountOnEnter
-                            eventKey={CourseDetailsTabs.STUDENT_GRADES}
-                            title={`${studentNameAndId.name}'s Grades`}
-                        >
-                            <StatisticsTab course={course} userId={studentNameAndId.userId} />
-                        </Tab>)}
-                </Tabs>
-            </Provider>
+                        <StatisticsTab course={course} userId={studentNameAndId.userId} />
+                    </Tab>)}
+            </Tabs>
         </Container>
     );
 };

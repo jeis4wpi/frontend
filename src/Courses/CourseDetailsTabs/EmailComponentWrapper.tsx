@@ -10,8 +10,8 @@ import { TiUserDelete } from 'react-icons/ti';
 import { MdLaunch } from 'react-icons/md';
 import MaterialIcons from '../../Components/MaterialIcons';
 import { deleteEnrollment } from '../../APIInterfaces/BackendAPI/Requests/CourseRequests';
-import { courseContext } from '../CourseDetailsPage';
 import { ConfirmationModal } from '../../Components/ConfirmationModal';
+import { useCourseContext } from '../../Courses/CourseProvider';
 import logger from '../../Utilities/Logger';
 
 interface EmailComponentWrapperProps {
@@ -22,21 +22,16 @@ interface EmailComponentWrapperProps {
  * This component manages the state for the Email Students functionality.
  */
 export const EmailComponentWrapper: React.FC<EmailComponentWrapperProps> = ({ users: propUsers }) => {
-    const [users, setUsers] = useState(propUsers);
+    const {course, users, setUsers} = useCourseContext();
     const [selectedStudents, setSelectedStudents] = useState<UserObject[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [showConfirmDelete, setShowConfirmDelete] = useState<{state: boolean, user: UserObject | null}>({state: false, user: null});
     const userType: UserRole = getUserRole();
-    const course = useContext(courseContext);
-
-    useEffect(()=>{
-        setUsers(propUsers);
-    }, [propUsers]);
 
     const onDropStudent = (userId: number, courseId: number) => {
         try {
             deleteEnrollment({userId, courseId});
-            setUsers(_.filter(users, user => user.id !== userId));
+            setUsers?.(_.filter(users, user => user.id !== userId));
         } catch (e) {
             // TODO: display errors to user.
             logger.error('Drop student failed', e);

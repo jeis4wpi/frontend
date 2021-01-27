@@ -4,6 +4,7 @@ import SimpleFormRow from '../Components/SimpleFormRow';
 import useAlertState from '../Hooks/useAlertState';
 import logger from '../Utilities/Logger';
 import { registerUser } from '../APIInterfaces/BackendAPI/Requests/UserRequests';
+import { Constants } from '../Utilities/Constants';
 
 interface RegisterFormProps {
 
@@ -139,8 +140,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = () => {
                 onChange={handleNamedChange('registerPassword')}
                 placeholder="******"
                 // TODO: Minimum password requirements
-                minLength={4}
-                maxLength={26}
+                minLength={Constants.Passwords.MIN_LENGTH}
+                maxLength={Constants.Passwords.MAX_LENGTH}
             />
             <SimpleFormRow
                 id="registerPasswordConf"

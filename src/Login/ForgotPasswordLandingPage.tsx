@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import logger from '../Utilities/Logger';
 import LandingPageWrapper from '../Components/LandingPageWrapper';
+import { Constants } from '../Utilities/Constants';
 
 interface ForgotPasswordLandingPageProps {
 
@@ -135,8 +136,8 @@ export const ForgotPasswordLandingPage: React.FC<ForgotPasswordLandingPageProps>
                     onChange={handleNamedChange('password')}
                     placeholder="******"
                     // TODO: Minimum password requirements
-                    minLength={4}
-                    maxLength={26}
+                    minLength={Constants.Passwords.MIN_LENGTH}
+                    maxLength={Constants.Passwords.MAX_LENGTH}
                 />
                 <SimpleFormRow
                     id="password"
@@ -149,9 +150,6 @@ export const ForgotPasswordLandingPage: React.FC<ForgotPasswordLandingPageProps>
                     type="password"
                     onChange={handleNamedChange('passwordConf')}
                     placeholder="******"
-                    // TODO: Minimum password requirements
-                    minLength={4}
-                    maxLength={26}
                 />
                 <Form.Group>
                     <Button type="submit" disabled={forgotPasswordAlertType === 'success'}>Submit</Button>

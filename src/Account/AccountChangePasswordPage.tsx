@@ -5,6 +5,7 @@ import useAlertState from '../Hooks/useAlertState';
 import { putUpdatePassword } from '../APIInterfaces/BackendAPI/Requests/UserRequests';
 import { Grid } from '@material-ui/core';
 import logger from '../Utilities/Logger';
+import { Constants } from '../Utilities/Constants';
 
 interface AccountChangePasswordPageProps {
 
@@ -97,9 +98,6 @@ export const AccountChangePasswordPage: React.FC<AccountChangePasswordPageProps>
                     type="password"
                     onChange={handleNamedChange('passwordCurrent')}
                     placeholder="******"
-                    // TODO: Minimum password requirements
-                    minLength={4}
-                    maxLength={26}
                 />
                 <SimpleFormRow
                     id="password"
@@ -113,8 +111,8 @@ export const AccountChangePasswordPage: React.FC<AccountChangePasswordPageProps>
                     onChange={handleNamedChange('password')}
                     placeholder="******"
                     // TODO: Minimum password requirements
-                    minLength={4}
-                    maxLength={26}
+                    minLength={Constants.Passwords.MIN_LENGTH}
+                    maxLength={Constants.Passwords.MAX_LENGTH}
                 />
                 <SimpleFormRow
                     id="password"
@@ -127,9 +125,6 @@ export const AccountChangePasswordPage: React.FC<AccountChangePasswordPageProps>
                     type="password"
                     onChange={handleNamedChange('passwordConf')}
                     placeholder="******"
-                    // TODO: Minimum password requirements
-                    minLength={4}
-                    maxLength={26}
                 />
                 <Form.Group>
                     <Button type="submit">Submit</Button>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Button, ButtonGroup, CircularProgress, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, ListSubheader } from '@material-ui/core';
+import { Button, ButtonGroup, CircularProgress, ClickAwayListener, Grow, MenuList, Paper, Popper, ListSubheader } from '@material-ui/core';
 import { startExportOfTopic } from '../../APIInterfaces/BackendAPI/Requests/CourseRequests';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import _ from 'lodash';
